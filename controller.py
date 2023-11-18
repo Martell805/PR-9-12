@@ -13,21 +13,22 @@ Thread(target=publisherClient.loop_forever).start()
 
 def publish(parameter: str, state: str) -> str:
     payload = json.dumps({parameter: state})
-    last_update[parameter] = state
+    status[parameter] = state
     publisherClient.publish(MQTT_TOPIC, payload)
 
     return payload
 
 
-last_update = {}
+status = {}
 
 
 def on_message(_client, userdata, msg):
-    global last_update
-    print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+    global status
+    print(f'Получено "{msg.payload.decode()}" из топика "{msg.topic}"')
 
     last_update = json.loads(msg.payload.decode())
-    print(last_update)
+    status.update(last_update)
+    print(status)
 
 
 subscriberClient = paho.Client(MQTT_CLIENT_ID + "_SUBSCRIBER")
@@ -39,4 +40,4 @@ Thread(target=subscriberClient.loop_forever).start()
 
 
 def get_status() -> str:
-    return json.dumps(last_update)
+    return json.dumps(status)
