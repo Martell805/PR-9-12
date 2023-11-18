@@ -13,19 +13,20 @@ Thread(target=publisherClient.loop_forever).start()
 
 def publish(parameter: str, state: str) -> str:
     payload = json.dumps({parameter: state})
+    last_update[parameter] = state
     publisherClient.publish(MQTT_TOPIC, payload)
 
     return payload
 
 
-last_update = "{}"
+last_update = {}
 
 
 def on_message(_client, userdata, msg):
     global last_update
     print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 
-    last_update = msg.payload.decode()
+    last_update = json.loads(msg.payload.decode())
     print(last_update)
 
 
@@ -38,4 +39,4 @@ Thread(target=subscriberClient.loop_forever).start()
 
 
 def get_status() -> str:
-    return last_update
+    return json.dumps(last_update)
