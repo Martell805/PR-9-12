@@ -3,10 +3,10 @@ from threading import Thread
 
 import paho.mqtt.client as paho
 
-from config import MQTT_BROKER, MQTT_CLIENT_ID, MQTT_TOKEN, MQTT_TOPIC, MQTT_PORT
+from config import MQTT_BROKER, MQTT_CLIENT_ID, MQTT_SENDER_TOKEN, MQTT_TOPIC, MQTT_PORT
 
 publisherClient = paho.Client(MQTT_CLIENT_ID + "_PUBLISHER")
-publisherClient.username_pw_set(MQTT_TOKEN)
+publisherClient.username_pw_set(MQTT_SENDER_TOKEN)
 publisherClient.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
 Thread(target=publisherClient.loop_forever).start()
 
